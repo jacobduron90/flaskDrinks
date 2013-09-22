@@ -41,7 +41,7 @@ Example Response:
       ]
     }
 
-######/drinks/'<president>'
+######/drinks/president
 
 This endpoint return a drink for a specific president. Since this is a namespace, URL encoding needs to use %20 for spaces between first name and last name of a given president
 
