@@ -105,5 +105,32 @@ def create_drink():
     return jsonify( {'drink': drink} ), 201
 
 
+# Add an ingredient to the ingredients object for a given president
+@app.route('/presidrinks/api/v1.0/drinks/ingredients/<president>', methods = ['POST'])
+def add_ingredient(president):
+    if not request.json:
+        abort(400)
+    p = president.lower()
+    drink = filter(lambda d: d['president'] == p, drinks)
+
+    for key, value in request.json.items():
+        drink[0]['ingredients'][key] = value
+
+    return jsonify( {'drink': drink} ), 201
+
+
+# Add a step to the steps object for a given president
+@app.route('/presidrinks/api/v1.0/drinks/steps/<president>', methods = ['POST'])
+def add_step(president):
+    if not request.json:
+        abort(400)
+    p = president.lower()
+    drink = filter(lambda d: d['president'] == p, drinks)
+
+    for key, value in request.json.items():
+        drink[0]['steps'][key] = value
+
+    return jsonify( {'drink': drink} ), 201
+
 if __name__ == '__main__':
     app.run(debug=True)
