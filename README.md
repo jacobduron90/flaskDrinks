@@ -10,7 +10,17 @@ PresiDrinks API v1.0 is currently under development...
 
 This endpoint returns a JSON object for each drink in the PresiDrink database
 
+Example Query:
+
+    curl -i http://127.0.0.1:5000/presidrinks/api/v1.0/drinks
+
 Example Response:
+
+    HTTP/1.0 200 OK
+    Content-Type: application/json
+    Content-Length: 828
+    Server: Werkzeug/0.9.4 Python/2.7.2
+    Date: Sun, 22 Sep 2013 02:44:21 GMT
 
     {
       "drinks": [
@@ -45,7 +55,17 @@ Example Response:
 
 This endpoint return a drink for a specific president. Since this is a namespace, URL encoding needs to use %20 for spaces between first name and last name of a given president
 
+Example Query:
+
+    curl -i http://127.0.0.1:5000/presidrinks/api/v1.0/drinks/george%20washington
+
 Example Response:
+
+    HTTP/1.0 200 OK
+    Content-Type: application/json
+    Content-Length: 557
+    Server: Werkzeug/0.9.4 Python/2.7.2
+    Date: Sun, 22 Sep 2013 02:45:10 GMT
 
     {
       "drink": {
