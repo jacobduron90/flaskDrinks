@@ -1,0 +1,17 @@
+<!-- View all drink objects -->
+curl -i http://127.0.0.1:5000/presidrinks/api/v1.0/drinks
+
+<!-- View a drink object QueryParameter = president -->
+curl -i http://127.0.0.1:5000/presidrinks/api/v1.0/drinks/george%20washington
+
+<!-- Create a drink object -->
+curl -i -H "Content-Type: application/json" -X POST -d '{"president": "Thomas Jefferson", "drinkName": "Negroni" }' http://localhost:5000/presidrinks/api/v1.0/drinks
+
+<!-- Create an ingredient object -->
+curl -i -H "Content-Type: application/json" -X POST -d '{"four": "Maraschino Cherry"}' http://localhost:5000/presidrinks/api/v1.0/drinks/ingredients/george%20washington
+
+<!-- Create a step object -->
+curl -i -H "Content-Type: application/json" -X POST -d '{"five": "Enjoy!!!"}' http://localhost:5000/presidrinks/api/v1.0/drinks/steps/george%20washington
+
+<!-- Edit a drink object -->
+curl -i -H "Content-Type: application/json" -X POST -d '{"drinkName": "Sam Adams Oktoberfest"}' http://localhost:5000/presidrinks/api/v1.0/drinks/john%20adams

@@ -29,6 +29,10 @@ drinks = [
         }
     }
 ]
+  ########################
+ #### Helper Methods ####
+########################
+
 
   ########################
  #### Error Handlers ####
@@ -45,15 +49,14 @@ def not_found(error):
 
 
 @app.route('/presidrinks/api/v1.0/drinks', methods = ['GET'])
-def get_drinks():
+def getDrinks():
     return jsonify( {'drinks': drinks} )
 
 
 # URL encoding for the space is %20 -- will the http request handle this?
 @app.route('/presidrinks/api/v1.0/drinks/<president>', methods = ['GET'])
-def get_drink(president):
-    p = president.lower()
-    drink = filter(lambda d: d['president'] == p, drinks)
+def getDrink(president):
+    drink = filter(lambda d: d['president'] == president.lower(), drinks)
     if len(drink) == 0:
         abort(404)
     return jsonify( {'drink': drink[0]} )
@@ -69,8 +72,9 @@ this work with the MySQL database?
 '''
 
 
+# Create a new drink object
 @app.route('/presidrinks/api/v1.0/drinks', methods = ['POST'])
-def create_drink():
+def createDrink():
     if not request.json or not 'president' in request.json:
         abort(400)
     drink = {
@@ -86,11 +90,10 @@ def create_drink():
 
 # Add an ingredient to the ingredients object for a given president
 @app.route('/presidrinks/api/v1.0/drinks/ingredients/<president>', methods = ['POST'])
-def add_ingredient(president):
+def createIngredient(president):
     if not request.json:
         abort(400)
-    p = president.lower()
-    drink = filter(lambda d: d['president'] == p, drinks)
+    drink = filter(lambda d: d['president'] == president.lower(), drinks)
 
     for key, value in request.json.items():
         drink[0]['ingredients'][key] = value
@@ -100,16 +103,39 @@ def add_ingredient(president):
 
 # Add a step to the steps object for a given president
 @app.route('/presidrinks/api/v1.0/drinks/steps/<president>', methods = ['POST'])
-def add_step(president):
+def createStep(president):
     if not request.json:
         abort(400)
-    p = president.lower()
-    drink = filter(lambda d: d['president'] == p, drinks)
+    drink = filter(lambda d: d['president'] == president.lower(), drinks)
 
     for key, value in request.json.items():
         drink[0]['steps'][key] = value
 
     return jsonify( {'drink': drink} ), 201
+
+
+# Edit an existing drink object
+@app.route('/presidrinks/api/v1.0/drinks/<president>', methods = ['POST'])
+def editDrink(president):
+    drink = filter(lambda d: d['president'] == president.lower(), drinks)
+
+    # Error checking
+    if len(drink) < 1:
+        abort(404)
+    if not request.json:
+        abort(400)
+    for key, value in request.json.items():
+        if key == 'ingredients' or 'steps':
+            abort(404)
+        if key != 'ingredients' or 'steps':
+            drink[0][key] = request.json.get(key, drink[0][key])
+    return jsonify({ 'drink': drink[0]})
+
+
+# Edit an existing ingredient object for a drink
+@app.route('/presidrinks/api/v1.0/drinks/ingredients/edit/<president>', methods = ['POST'])
+def editIngredient(president):
+    pass
 
 if __name__ == '__main__':
     app.run(debug=True)
