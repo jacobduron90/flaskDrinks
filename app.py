@@ -1,7 +1,7 @@
 #!venv/bin/python
 
 from flask import Flask
-from flask import make_response, jsonify, abort
+from flask import make_response, jsonify, abort, request
 
 app = Flask(__name__)
 
@@ -57,6 +57,31 @@ def get_drink(president):
     if len(drink) == 0:
         abort(404)
     return jsonify( {'drink': drink[0]} )
+
+  #######################
+ #### POST Requests ####
+#######################
+
+'''
+Need to figure out how to handle object creation for
+these nested objects (ingredients, steps). How will 
+this work with the MySQL database?
+'''
+
+
+@app.route('/presidrinks/api/v1.0/drinks', methods = ['POST'])
+def create_drink():
+    if not request.json or not 'president' in request.json:
+        abort(400)
+    drink = {
+        'id': drinks[-1]['id'] + 1,
+        'president': request.json['president'],
+        'drinkName': request.json.get('drinkName', ""),
+        'ingredients': {},
+        'steps': {},
+    }
+    drinks.append(drink)
+    return jsonify( {'drink': drink} ), 201
 
 
 if __name__ == '__main__':
