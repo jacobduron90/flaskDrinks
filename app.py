@@ -9,7 +9,7 @@ app = Flask(__name__)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = "mysql://president:housesecret@127.0.0.1/presiDrinks"
 
-from models import db
+from models import db, Drink
 
 db.init_app(app)
 
@@ -56,7 +56,15 @@ def not_found(error):
 
 @app.route('/presidrinks/api/v1.0/drinks', methods = ['GET'])
 def get_drinks():
-    return jsonify( {'drinks': drinks} )
+    #return jsonify( {'drinks': drinks} )
+    drinks = Drink.query.all()
+    
+    json_list = alchemy_json(drinks, Drink)
+    return jsonify({'drinks': json_list})
+
+
+
+
 
 
 # URL encoding for the space is %20 -- will the http request handle this?
@@ -94,16 +102,23 @@ this work with the MySQL database?
 def create_drink():
     if not request.json or not 'president' in request.json:
         abort(400)
-    drink = {
-        'id': drinks[-1]['id'] + 1,
-        'president': request.json['president'],
-        'drinkName': request.json.get('drinkName', ""),
-        'ingredients': {},
-        'steps': {},
-    }
-    drinks.append(drink)
-    return jsonify( {'drink': drink} ), 201
+    else:
+        newdrink = Drink(request.json.get('drinkName', ""), request.json['president'])
+        db.session.add(newdrink)
+        db.session.commt()
 
+
+    #drink = {
+    #    'id': drinks[-1]['id'] + 1,
+    #    'president': request.json['president'],
+    #    'drinkName': request.json.get('drinkName', ""),
+    #    'ingredients': {},
+    #    'steps': {},
+    #}
+    #drinks.append(drink)
+    #return jsonify( {'drink': drink} ), 201
+    drinks = Drink.query.all()
+    return drink
 
 # Add an ingredient to the ingredients object for a given president
 @app.route('/presidrinks/api/v1.0/drinks/ingredients/<president>', methods = ['POST'])
@@ -131,6 +146,25 @@ def add_step(president):
         drink[0]['steps'][key] = value
 
     return jsonify( {'drink': drink} ), 201
+
+
+
+def alchemy_json(Mycollection, Mytable):
+    output = []
+    for i in Mycollection:
+        print i
+        row = {}
+        for field in Mytable.__table__.columns:
+            v = getattr(i, str(field.name), None)
+            if v is not None:
+                row[field.name] = v
+
+        output.append(row)
+        return output
+
+
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)
