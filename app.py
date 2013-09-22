@@ -2,8 +2,18 @@
 
 from flask import Flask
 from flask import make_response, jsonify, abort, request
+from flask.ext.sqlalchemy import SQLAlchemy
+
 
 app = Flask(__name__)
+
+app.config['SQLALCHEMY_DATABASE_URI'] = "mysql://president:housesecret@127.0.0.1/presiDrinks"
+
+from models import db
+
+db.init_app(app)
+
+
 
 drinks = [
     {   'id': 1,
@@ -57,6 +67,17 @@ def get_drink(president):
     if len(drink) == 0:
         abort(404)
     return jsonify( {'drink': drink[0]} )
+
+
+@app.route('/testdb')
+def testdb():
+  #if db.session.query("1").from_statement("SELECT 1").all():
+  #  return 'It works.'
+  #else:
+  #  return 'Something is broken.'   
+
+  db.create_all()
+  return "i got here"
 
   #######################
  #### POST Requests ####
