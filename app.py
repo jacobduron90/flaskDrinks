@@ -62,7 +62,6 @@ def not_found(error):
 def getDrinks():
     #return jsonify( {'drinks': drinks} )
     drinks = Drink.query.all()
-    
     json_list = alchemy_json(drinks, Drink)
     return jsonify({'drinks': json_list})
 
@@ -107,9 +106,15 @@ def createDrink():
     if not request.json or not 'president' in request.json:
         abort(400)
     else:
-        newdrink = Drink(request.json.get('drinkName', ""), request.json['president'])
+        name = request.json.get('drinkName', "")
+        president  = request.json['president']
+        print president
+        newdrink = Drink(name, president)
         db.session.add(newdrink)
-        db.session.commt()
+        db.session.commit()
+        drinks = Drink.query.all()
+        json_list = alchemy_json(drinks, Drink)
+        return jsonify({'drinks': json_list})
 
 
     #drink = {
@@ -121,8 +126,7 @@ def createDrink():
     #}
     #drinks.append(drink)
     #return jsonify( {'drink': drink} ), 201
-    drinks = Drink.query.all()
-    return drink
+
 
 # Add an ingredient to the ingredients object for a given president
 @app.route('/presidrinks/api/v1.0/drinks/ingredients/<president>', methods = ['POST'])
@@ -154,7 +158,6 @@ def createStep(president):
 def alchemy_json(Mycollection, Mytable):
     output = []
     for i in Mycollection:
-        print i
         row = {}
         for field in Mytable.__table__.columns:
             v = getattr(i, str(field.name), None)
@@ -162,7 +165,7 @@ def alchemy_json(Mycollection, Mytable):
                 row[field.name] = v
 
         output.append(row)
-        return output
+    return output
 
 
 

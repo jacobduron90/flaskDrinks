@@ -13,5 +13,11 @@ class Drink(db.Model):
 
 	def __init__(self, name, president):
 		self.name = name.title()
-		self.president = name.title()
+		self.president = president.title()
+
+
+
+
+
+
 
