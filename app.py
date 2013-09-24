@@ -73,10 +73,10 @@ def getDrinks():
 # URL encoding for the space is %20 -- will the http request handle this?
 @app.route('/presidrinks/api/v1.0/drinks/<president>', methods = ['GET'])
 def getDrink(president):
-    drink = filter(lambda d: d['president'] == president.lower(), drinks)
-    if len(drink) == 0:
+    query = Drink.query.filter_by(president=president).first();
+    if query == None:
         abort(404)
-    return jsonify( {'drink': drink[0]} )
+    return jsonify( {'drink': {'name': query.name, 'president': query.president, 'uid':query.uid}} )
 
 
 @app.route('/testdb')
@@ -85,7 +85,7 @@ def testdb():
   #  return 'It works.'
   #else:
   #  return 'Something is broken.'   
-
+  db.drop_all()
   db.create_all()
   return "i got here"
 
@@ -108,6 +108,7 @@ def createDrink():
     else:
         name = request.json.get('drinkName', "")
         president  = request.json['president']
+        ingredient = request.json.get('ingredients', )
         print president
         newdrink = Drink(name, president)
         db.session.add(newdrink)
